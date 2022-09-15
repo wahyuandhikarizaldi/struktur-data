@@ -94,7 +94,7 @@ int main()
 
     slist_init(&myList);
 
-    // forEachElement(&myList, multiply2);
+    forEachElement(&myList, multiply2);
     forEachElement(&myList, reverseEach);
     forEachElement(&myList, printElement);
 
