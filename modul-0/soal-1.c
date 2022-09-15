@@ -50,8 +50,7 @@ void multiply2(struct List** node) {
     return;
 }
 
-void reverseEach(struct List** node)
-{
+void reverseEach(struct List** node) {
     int remainder, reverse = 0;
 
     while ((*node)->data != 0) {
@@ -64,7 +63,15 @@ void reverseEach(struct List** node)
 }
 
 void sumDigit(struct List** node) {
+    int remainder, reverse = 0;
 
+    while ((*node)->data != 0) {
+        remainder = (*node)->data % 10;
+        reverse += remainder;
+        (*node)->data /= 10;
+    }
+
+    (*node)->data = reverse;
 }
 
 /** Yang penting work ygy **/
@@ -88,7 +95,10 @@ int main()
     slist_init(&myList);
 
     // forEachElement(&myList, multiply2);
-    // forEachElement(&myList, reverseEach);
+    forEachElement(&myList, reverseEach);
+    forEachElement(&myList, printElement);
+
+    forEachElement(&myList, sumDigit);
     forEachElement(&myList, printElement);
 
     free(myList);
