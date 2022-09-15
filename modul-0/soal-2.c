@@ -54,6 +54,11 @@ void dArray_pushBack(DynamicArray *darray, int value)
     darray->_arr[darray->_size++] = value;
 }
 void dArray_insertAt(DynamicArray *darray, unsigned index, int value){
+    if(index > darray->_size) {
+        printf("dArray_insertAt gagal!\n");
+        return;
+    }
+
     if (darray->_size + 1 < darray->_capacity){
         darray->_capacity *= 2;
         int *newArray = (int *)malloc(sizeof(int) * darray->_capacity);
@@ -68,12 +73,34 @@ void dArray_insertAt(DynamicArray *darray, unsigned index, int value){
         darray->_arr = newArray;
         free(oldArray);        
     }
-        darray->_size++;
-
-        memmove(&darray->_arr[index+1], &darray->_arr[index], &darray->_arr[darray->_size] - &darray->_arr[index]);
+        memmove(&darray->_arr[index+1], &darray->_arr[index], (&darray->_arr[darray->_size] - &darray->_arr[index]) * sizeof(*darray));
         darray->_arr[index] = value;
+        darray->_size++;
 }
-void dArray_removeAt(DynamicArray *darray, unsigned index);
+void dArray_removeAt(DynamicArray *darray, unsigned index) {
+    if(index > darray->_size) {
+        printf("dArray_insertAt gagal!\n");
+        return;
+    }
+
+    if (darray->_size + 1 < darray->_capacity){
+        darray->_capacity *= 2;
+        int *newArray = (int *)malloc(sizeof(int) * darray->_capacity);
+
+        unsigned it;
+        for (it = 0; it < darray->_size; it++)
+        {
+            newArray[it] = darray->_arr[it];
+        }
+
+        int *oldArray = darray->_arr;
+        darray->_arr = newArray;
+        free(oldArray);        
+    }
+        memmove(&darray->_arr[index], &darray->_arr[index+1], (&darray->_arr[darray->_size] - &darray->_arr[index]) * sizeof(*darray));
+        darray->_arr[darray->_size] = 0;
+        darray->_size--;
+}
 
 int main()
 {
@@ -85,8 +112,8 @@ int main()
     dArray_pushBack(&myArray, 4);
     dArray_pushBack(&myArray, 5);
     dArray_insertAt(&myArray, 3, 10);
+    dArray_removeAt(&myArray, 2);
 
-    // printf("%d", myArray._size);
     unsigned i;
     for(i=0; i<myArray._size; i++) {
       printf("%d\n", myArray._arr[i]);
