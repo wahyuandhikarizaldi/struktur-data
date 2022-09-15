@@ -6,6 +6,14 @@ struct List {
     struct List *next;
 };
 
+void slist_push(struct List** head, int new_data) {
+	struct List* new_node = (struct List*) malloc(sizeof(struct List));
+
+	new_node->data = new_data;
+	new_node->next = (*head);
+	(*head) = new_node;
+}
+
 void slist_append(struct List** head, int data) {
     struct List* new_node = (struct List*) malloc(sizeof(struct List));
     struct List* last = *head;
@@ -27,28 +35,45 @@ void slist_append(struct List** head, int data) {
 }
 
 void slist_init(struct List** head) {
-    for(int i = 1 ; i <= 5; i++) {
+    for(int i = 2550 ; i <= 2555; i++) {
         slist_append(head, i);
     }
 }
 
-void printElement(int *elem) {
-    printf("%d ", *elem);
+void printElement(struct List** node) {
+    printf("%d\n", (*node)->data);
     return;
 }
 
-void multiply2(int *elem) {
-    *elem *= 2;
+void multiply2(struct List** node) {
+    (*node)->data *= 2;
     return;
+}
+
+void reverseEach(struct List** node)
+{
+    int remainder, reverse = 0;
+
+    while ((*node)->data != 0) {
+        remainder = (*node)->data % 10;
+        reverse = reverse * 10 + remainder;
+        (*node)->data /= 10;
+    }
+
+    (*node)->data = reverse;
+}
+
+void sumDigit(struct List** node) {
+
 }
 
 /** Yang penting work ygy **/
-void forEachElement(struct List **list, void (*func)(int *)) {
+void forEachElement(struct List **list, void (*func)(struct List **)) {
     struct List *tmp = NULL;
 
     while(*list != NULL) {
-        (*func)( &((*list)->data) );
-        slist_append(&tmp, ((*list)->data));
+        (*func)( (list) );
+        slist_append(&tmp, (*list)->data);
         *list = (*list)->next;
     }
 
@@ -62,8 +87,8 @@ int main()
 
     slist_init(&myList);
 
-    forEachElement(&myList, multiply2);
-    
+    // forEachElement(&myList, multiply2);
+    forEachElement(&myList, reverseEach);
     forEachElement(&myList, printElement);
 
     free(myList);
