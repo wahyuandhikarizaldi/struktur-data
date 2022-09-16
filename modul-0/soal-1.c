@@ -40,46 +40,46 @@ void slist_init(struct List** head) {
     }
 }
 
-void printElement(struct List** node) {
-    printf("%d\n", (*node)->data);
+void printElement(int *elem) {
+    printf("%d\n", *elem);
     return;
 }
 
-void multiply2(struct List** node) {
-    (*node)->data *= 2;
+void multiply2(int *elem) {
+    *elem *= 2;
     return;
 }
 
-void reverseEach(struct List** node) {
+void reverseEach(int *elem) {
     int remainder, reverse = 0;
 
-    while ((*node)->data != 0) {
-        remainder = (*node)->data % 10;
+    while (*elem != 0) {
+        remainder = *elem % 10;
         reverse = reverse * 10 + remainder;
-        (*node)->data /= 10;
+        *elem /= 10;
     }
 
-    (*node)->data = reverse;
+    *elem = reverse;
 }
 
-void sumDigit(struct List** node) {
+void sumDigit(int *elem) {
     int remainder, reverse = 0;
 
-    while ((*node)->data != 0) {
-        remainder = (*node)->data % 10;
+    while (*elem != 0) {
+        remainder = *elem % 10;
         reverse += remainder;
-        (*node)->data /= 10;
+        *elem /= 10;
     }
 
-    (*node)->data = reverse;
+    *elem = reverse;
 }
 
 /** Yang penting work ygy **/
-void forEachElement(struct List **list, void (*func)(struct List **)) {
+void forEachElement(struct List **list, void (*func)(int *elem)) {
     struct List *tmp = NULL;
 
     while(*list != NULL) {
-        (*func)( (list) );
+        (*func)( &(*list)->data);
         slist_append(&tmp, (*list)->data);
         *list = (*list)->next;
     }
@@ -94,12 +94,24 @@ int main()
 
     slist_init(&myList);
 
+    printf("==== [initialize] ====\n");
+    forEachElement(&myList, printElement);
+    printf("\n");
+
+    printf("==== [multiply2] ====\n");
     forEachElement(&myList, multiply2);
+    forEachElement(&myList, printElement);
+    printf("\n");
+
+    printf("==== [reverseEach] ====\n");
     forEachElement(&myList, reverseEach);
     forEachElement(&myList, printElement);
+    printf("\n");
 
+    printf("==== [sumDigit] ====\n");
     forEachElement(&myList, sumDigit);
     forEachElement(&myList, printElement);
+    printf("\n");
 
     free(myList);
     return 0;

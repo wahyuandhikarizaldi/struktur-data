@@ -31,75 +31,59 @@ int dArray_getAt(DynamicArray *darray, unsigned index)
   }
 }
 
-void dArray_pushBack(DynamicArray *darray, int value)
-{
-    // Array tdk muat
-    if (darray->_size + 1 < darray->_capacity)
+void dArray_autoExpand(DynamicArray *darray) {
+    darray->_capacity *= 2;
+    int *newArray = (int *)malloc(sizeof(int) * darray->_capacity);
+
+    unsigned it;
+    for (it = 0; it < darray->_size; it++)
     {
-        darray->_capacity *= 2;
-        int *newArray = (int *)malloc(sizeof(int) * darray->_capacity);
-
-        unsigned it;
-        for (it = 0; it < darray->_size; it++)
-        {
-            newArray[it] = darray->_arr[it];
-        }
-
-        int *oldArray = darray->_arr;
-        darray->_arr = newArray;
-        free(oldArray);
+        newArray[it] = darray->_arr[it];
     }
 
-    // kasus jika size < capacity
+    int *oldArray = darray->_arr;
+    darray->_arr = newArray;
+    free(oldArray);
+}
+
+void dArray_pushBack(DynamicArray *darray, int value)
+{
+    if (darray->_size + 1 >= darray->_capacity)
+    {
+        dArray_autoExpand(darray);
+    }
+
     darray->_arr[darray->_size++] = value;
 }
 void dArray_insertAt(DynamicArray *darray, unsigned index, int value){
     if(index > darray->_size) {
-        printf("dArray_insertAt gagal!\n");
+        printf("Gagal insert \"%d\" di index ke-%d\n", value, index);
         return;
     }
 
-    if (darray->_size + 1 < darray->_capacity){
-        darray->_capacity *= 2;
-        int *newArray = (int *)malloc(sizeof(int) * darray->_capacity);
-
-        unsigned it;
-        for (it = 0; it < darray->_size; it++)
-        {
-            newArray[it] = darray->_arr[it];
-        }
-
-        int *oldArray = darray->_arr;
-        darray->_arr = newArray;
-        free(oldArray);        
+    if (darray->_size + 1 >= darray->_capacity){
+        dArray_autoExpand(darray);        
     }
-        memmove(&darray->_arr[index+1], &darray->_arr[index], (&darray->_arr[darray->_size] - &darray->_arr[index]) * sizeof(*darray));
-        darray->_arr[index] = value;
-        darray->_size++;
+    
+    memmove(&darray->_arr[index+1], &darray->_arr[index], (&darray->_arr[darray->_size] - &darray->_arr[index]) * sizeof(*darray));
+    darray->_arr[index] = value;
+    darray->_size++;
 }
 void dArray_removeAt(DynamicArray *darray, unsigned index) {
     if(index > darray->_size) {
-        printf("dArray_insertAt gagal!\n");
+        printf("Gagal remove data di index ke-%d\n", index);
         return;
     }
+    
+    memmove(&darray->_arr[index], &darray->_arr[index+1], (&darray->_arr[darray->_size] - &darray->_arr[index]) * sizeof(*darray));
+    darray->_arr[darray->_size] = 0;
+    darray->_size--;
+}
 
-    if (darray->_size + 1 < darray->_capacity){
-        darray->_capacity *= 2;
-        int *newArray = (int *)malloc(sizeof(int) * darray->_capacity);
-
-        unsigned it;
-        for (it = 0; it < darray->_size; it++)
-        {
-            newArray[it] = darray->_arr[it];
-        }
-
-        int *oldArray = darray->_arr;
-        darray->_arr = newArray;
-        free(oldArray);        
+void dArray_printAll(DynamicArray *darray) {
+    for(unsigned i = 0; i < darray->_size; i++) {
+        printf(" [%d] %d\n", i, darray->_arr[i]);
     }
-        memmove(&darray->_arr[index], &darray->_arr[index+1], (&darray->_arr[darray->_size] - &darray->_arr[index]) * sizeof(*darray));
-        darray->_arr[darray->_size] = 0;
-        darray->_size--;
 }
 
 int main()
@@ -114,8 +98,9 @@ int main()
     dArray_insertAt(&myArray, 3, 10);
     dArray_removeAt(&myArray, 2);
 
-    unsigned i;
-    for(i=0; i<myArray._size; i++) {
-      printf("%d\n", myArray._arr[i]);
-    }
+    printf("Array Information :\n");
+    printf(" Capacity : %d\n", myArray._capacity);
+    printf(" Size : %d\n", myArray._size);
+    printf("\nArray Contents :\n");
+    dArray_printAll(&myArray);
 }
